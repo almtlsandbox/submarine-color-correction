@@ -1,7 +1,7 @@
 ````markdown
 # Submarine Color Correction
 
-A professional GUI application for performing advanced color correction on submarine and underwater images. This tool provides white balance correction, red channel enhancement, dehazing, image fusion, and other specialized filters designed to improve underwater photography.
+A GUI application for performing advanced color correction on submarine and underwater images. This tool provides white balance correction, red channel enhancement, dehazing, image fusion, and other specialized filters designed to improve underwater photography.
 
 ## Features
 
