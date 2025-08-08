@@ -248,16 +248,16 @@ class ColorCorrectionGUI:
         self.frame = self.scrollable_frame
         
         # === FILE OPERATIONS ===
-        file_frame = tk.LabelFrame(self.frame, text="File Operations", padx=5, pady=5)
-        file_frame.grid(row=0, column=0, columnspan=3, sticky='ew', pady=(0,10))
+        self.file_frame = tk.LabelFrame(self.frame, text="File Operations", padx=5, pady=5)
+        self.file_frame.grid(row=0, column=0, columnspan=3, sticky='ew', pady=(0,10))
         
-        self.btn_select_folder = tk.Button(file_frame, text="Select Folder", command=self.select_folder)
+        self.btn_select_folder = tk.Button(self.file_frame, text="Select Folder", command=self.select_folder)
         self.btn_select_folder.grid(row=0, column=0, padx=5)
         
-        self.btn_select_video = tk.Button(file_frame, text="Select Video", command=self.select_video)
+        self.btn_select_video = tk.Button(self.file_frame, text="Select Video", command=self.select_video)
         self.btn_select_video.grid(row=0, column=1, padx=5)
         
-        self.btn_view_log = tk.Button(file_frame, text="View Log", command=self.view_log)
+        self.btn_view_log = tk.Button(self.file_frame, text="View Log", command=self.view_log)
         self.btn_view_log.grid(row=0, column=2, padx=5)
         
         # === IMAGE DISPLAY ===
@@ -280,6 +280,7 @@ class ColorCorrectionGUI:
         nav_frame = tk.LabelFrame(self.frame, text="Navigation & View", padx=5, pady=5)
         nav_frame.grid(row=2, column=0, columnspan=3, sticky='ew', pady=(5,10))
         
+        # Image navigation controls (row 0)
         self.btn_prev = tk.Button(nav_frame, text="<< Previous", command=self.prev_image)
         self.btn_prev.grid(row=0, column=0, sticky='ew', padx=2)
         
@@ -300,6 +301,30 @@ class ColorCorrectionGUI:
         
         self.btn_rotate_right = tk.Button(nav_frame, text="Rotate ↻", command=self.rotate_right)
         self.btn_rotate_right.grid(row=0, column=6, sticky='ew', padx=2)
+        
+        # Video navigation controls (row 1) - always visible but disabled for photos
+        video_nav_frame = tk.Frame(nav_frame)
+        video_nav_frame.grid(row=1, column=0, columnspan=7, sticky='ew', pady=(5,0))
+        
+        tk.Label(video_nav_frame, text="Video Frame:").pack(side=tk.LEFT)
+        self.frame_var = tk.IntVar(value=0)
+        self.video_frame_slider = tk.Scale(video_nav_frame, from_=0, to=100, 
+                                         orient=tk.HORIZONTAL, variable=self.frame_var,
+                                         command=self.on_video_frame_change, length=200, state='disabled')
+        self.video_frame_slider.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
+        
+        self.video_frame_label = tk.Label(video_nav_frame, text="0 / 0")
+        self.video_frame_label.pack(side=tk.RIGHT, padx=5)
+        
+        # Video playback controls (row 2) - only Play/Pause and Process Video
+        video_controls_frame = tk.Frame(nav_frame)
+        video_controls_frame.grid(row=2, column=0, columnspan=7, sticky='ew', pady=(2,0))
+        
+        self.btn_video_play = tk.Button(video_controls_frame, text="Play/Pause", command=self.toggle_video_playback, width=10, state='disabled')
+        self.btn_video_play.pack(side=tk.LEFT, padx=5)
+        
+        self.btn_process_video = tk.Button(video_controls_frame, text="Process Full Video", command=self.process_full_video, font=('Arial', 10, 'bold'), state='disabled', bg='gray', fg='white')
+        self.btn_process_video.pack(side=tk.RIGHT, padx=2)
         
         # Configure column weights for equal distribution
         for i in range(7):
@@ -333,22 +358,27 @@ class ColorCorrectionGUI:
         wb_tab = ttk.Frame(notebook)
         notebook.add(wb_tab, text="White Balance")
         
+        # Enable checkboxes with parameter change callback
         self.enable_white_balance = tk.BooleanVar(value=True)
-        tk.Checkbutton(wb_tab, text="Enable White Balance", variable=self.enable_white_balance).grid(row=0, column=0, sticky='w', padx=5, pady=5)
+        tk.Checkbutton(wb_tab, text="Enable White Balance", variable=self.enable_white_balance,
+                      command=self.on_parameter_change).grid(row=0, column=0, sticky='w', padx=5, pady=5)
         
         tk.Label(wb_tab, text="Method:").grid(row=0, column=1, sticky='w', padx=(10,5))
         method_frame = tk.Frame(wb_tab)
         method_frame.grid(row=0, column=2, sticky='w', padx=5)
         
         self.wb_method = tk.StringVar(value="robust")
-        tk.Radiobutton(method_frame, text="Robust", variable=self.wb_method, value="robust").pack(side=tk.LEFT)
-        tk.Radiobutton(method_frame, text="White Patch", variable=self.wb_method, value="white_patch").pack(side=tk.LEFT)
-        tk.Radiobutton(method_frame, text="Gray World", variable=self.wb_method, value="gray_world").pack(side=tk.LEFT)
+        tk.Radiobutton(method_frame, text="Robust", variable=self.wb_method, value="robust", 
+                      command=self.on_parameter_change).pack(side=tk.LEFT)
+        tk.Radiobutton(method_frame, text="White Patch", variable=self.wb_method, value="white_patch", 
+                      command=self.on_parameter_change).pack(side=tk.LEFT)
+        tk.Radiobutton(method_frame, text="Gray World", variable=self.wb_method, value="gray_world", 
+                      command=self.on_parameter_change).pack(side=tk.LEFT)
 
         tk.Label(wb_tab, text="Strength").grid(row=1, column=0, sticky='w', padx=5)
         self.white_balance_strength = tk.DoubleVar(value=1.0)
         tk.Scale(wb_tab, from_=0.0, to=2.0, resolution=0.1, orient=tk.HORIZONTAL, 
-                variable=self.white_balance_strength).grid(row=1, column=1, columnspan=2, sticky='ew', padx=5, pady=2)
+                variable=self.white_balance_strength, command=self.on_parameter_change).grid(row=1, column=1, columnspan=2, sticky='ew', padx=5, pady=2)
 
         tk.Label(wb_tab, text="Percentile Low").grid(row=2, column=0, sticky='w', padx=5)
         self.robust_lower = tk.DoubleVar(value=5)
@@ -375,7 +405,8 @@ class ColorCorrectionGUI:
         notebook.add(basic_tab, text="Basic")
         
         self.enable_red_channel = tk.BooleanVar(value=True)
-        tk.Checkbutton(basic_tab, text="Red Channel Enhancement", variable=self.enable_red_channel).grid(row=0, column=0, sticky='w', padx=5, pady=5)
+        tk.Checkbutton(basic_tab, text="Red Channel Enhancement", variable=self.enable_red_channel,
+                      command=self.on_parameter_change).grid(row=0, column=0, sticky='w', padx=5, pady=5)
         self.red_scale = tk.DoubleVar(value=1.3)
         tk.Scale(basic_tab, from_=1.0, to=3.0, resolution=0.1, orient=tk.HORIZONTAL, 
                 variable=self.red_scale).grid(row=0, column=1, columnspan=2, sticky='ew', padx=5, pady=2)
@@ -488,12 +519,14 @@ class ColorCorrectionGUI:
         self.upper_scale.config(from_=lower + 1)
         if self.robust_upper.get() <= lower:
             self.robust_upper.set(lower + 1)
+        self.on_parameter_change()
 
     def update_lower_max(self, val):
         upper = int(float(val))
         self.lower_scale.config(to=upper - 1)
         if self.robust_lower.get() >= upper:
             self.robust_lower.set(upper - 1)
+        self.on_parameter_change()
 
     def select_folder(self):
         folder = filedialog.askdirectory()
@@ -509,6 +542,11 @@ class ColorCorrectionGUI:
             return
         self.current_index = 0
         self.rotation_angle = 0  # Reset rotation when selecting new folder
+        
+        # Switch to photo mode - disable video controls
+        self.video_mode = False
+        self.disable_video_controls()
+        
         self.load_current_image()
 
     def load_current_image(self):
@@ -623,18 +661,35 @@ class ColorCorrectionGUI:
         return pil_image
 
     def prev_image(self):
-        if not self.image_paths:
-            return
-        self.current_index = (self.current_index - 1) % len(self.image_paths)
-        self.rotation_angle = 0  # Reset rotation when navigating
-        self.load_current_image()
+        if hasattr(self, 'video_mode') and self.video_mode:
+            # Video mode: go to previous frame
+            if hasattr(self, 'current_frame_number') and self.current_frame_number > 0:
+                self.current_frame_number -= 1
+                self.frame_var.set(self.current_frame_number)
+                self.load_current_video_frame()
+        else:
+            # Photo mode: go to previous image
+            if not self.image_paths:
+                return
+            self.current_index = (self.current_index - 1) % len(self.image_paths)
+            self.rotation_angle = 0  # Reset rotation when navigating
+            self.load_current_image()
 
     def next_image(self):
-        if not self.image_paths:
-            return
-        self.current_index = (self.current_index + 1) % len(self.image_paths)
-        self.rotation_angle = 0  # Reset rotation when navigating
-        self.load_current_image()
+        if hasattr(self, 'video_mode') and self.video_mode:
+            # Video mode: go to next frame
+            if hasattr(self, 'current_frame_number') and hasattr(self, 'total_frames'):
+                if self.current_frame_number < self.total_frames - 1:
+                    self.current_frame_number += 1
+                    self.frame_var.set(self.current_frame_number)
+                    self.load_current_video_frame()
+        else:
+            # Photo mode: go to next image
+            if not self.image_paths:
+                return
+            self.current_index = (self.current_index + 1) % len(self.image_paths)
+            self.rotation_angle = 0  # Reset rotation when navigating
+            self.load_current_image()
 
     def zoom_in(self):
         self.zoom_factor = min(self.zoom_factor * 1.1, 5.0)
@@ -815,10 +870,245 @@ class ColorCorrectionGUI:
         if not video_path:
             return
         
+        # Reset folder path when selecting a video (forget about previous photo folder)
+        self.image_paths = []
+        self.current_index = 0
+        
         try:
-            self.process_video(video_path)
+            self.load_video_for_preview(video_path)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to open video: {str(e)}")
+    
+    def load_video_for_preview(self, video_path):
+        """Load video and set up preview mode in existing canvas"""
+        # Initialize video capture
+        if hasattr(self, 'video_cap') and self.video_cap is not None:
+            self.video_cap.release()
+            
+        self.video_cap = cv2.VideoCapture(video_path)
+        if not self.video_cap.isOpened():
+            raise Exception("Could not open video file")
+        
+        # Get video properties
+        self.total_frames = int(self.video_cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.fps = self.video_cap.get(cv2.CAP_PROP_FPS)
+        self.video_width = int(self.video_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.video_height = int(self.video_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.current_frame_number = 0
+        self.video_path = video_path
+        self.video_mode = True
+        
+        # Update UI for video mode
+        self.enable_video_controls()
+        
+        # Load first frame
+        self.load_current_video_frame()
+    
+    def enable_video_controls(self):
+        """Enable video controls and update with current video info"""
+        # Update slider range
+        self.video_frame_slider.config(from_=0, to=self.total_frames-1, state='normal')
+        self.frame_var.set(0)
+        
+        # Update frame label
+        self.video_frame_label.config(text=f"0 / {self.total_frames}")
+        
+        # Enable video control buttons (only Play/Pause and Process Video)
+        self.btn_video_play.config(state='normal')
+        self.btn_process_video.config(state='normal', bg='green', fg='white')
+        
+        # Initialize playback state
+        self.is_playing = False
+        self.playback_job = None
+    
+    def disable_video_controls(self):
+        """Disable video controls for photo mode"""
+        # Disable slider
+        self.video_frame_slider.config(state='disabled')
+        self.frame_var.set(0)
+        
+        # Reset frame label
+        self.video_frame_label.config(text="0 / 0")
+        
+        # Disable video control buttons (only Play/Pause and Process Video)
+        self.btn_video_play.config(state='disabled')
+        self.btn_process_video.config(state='disabled', bg='gray', fg='white')
+        
+        # Stop any playing video
+        if hasattr(self, 'is_playing') and self.is_playing:
+            self.is_playing = False
+        if hasattr(self, 'playback_job') and self.playback_job:
+            self.root.after_cancel(self.playback_job)
+            self.playback_job = None
+    
+    def on_video_frame_change(self, value):
+        """Called when video frame slider changes"""
+        self.current_frame_number = int(value)
+        self.load_current_video_frame()
+    
+    def load_current_video_frame(self):
+        """Load and display the current video frame in the existing canvas"""
+        if not hasattr(self, 'video_cap') or not self.video_cap.isOpened():
+            return
+        
+        # Set frame position
+        self.video_cap.set(cv2.CAP_PROP_POS_FRAMES, self.current_frame_number)
+        ret, frame = self.video_cap.read()
+        
+        if ret:
+            self.current_frame = frame.copy()
+            
+            # Store as original image for processing
+            self.original_image = frame.copy()
+            
+            # Update frame counter
+            self.video_frame_label.config(text=f"{self.current_frame_number} / {self.total_frames-1}")
+            
+            # Display in canvas (this will show original and corrected side by side)
+            self.display_images()
+    
+    def jump_video_frames(self, delta):
+        """Jump by delta frames"""
+        new_frame = max(0, min(self.total_frames-1, self.current_frame_number + delta))
+        self.frame_var.set(new_frame)
+        self.current_frame_number = new_frame
+        self.load_current_video_frame()
+    
+    def toggle_video_playback(self):
+        """Toggle video playback"""
+        if not hasattr(self, 'video_mode') or not self.video_mode:
+            return
+            
+        self.is_playing = not self.is_playing
+        if self.is_playing:
+            self.play_video()
+        else:
+            if hasattr(self, 'playback_job') and self.playback_job:
+                self.root.after_cancel(self.playback_job)
+    
+    def play_video(self):
+        """Play video forward"""
+        if self.is_playing and self.current_frame_number < self.total_frames - 1:
+            self.jump_video_frames(1)
+            # Schedule next frame based on FPS
+            delay = int(1000 / self.fps) if self.fps > 0 else 33  # Default 30fps if fps is 0
+            self.playback_job = self.root.after(delay, self.play_video)
+        else:
+            self.is_playing = False
+    
+    def auto_tune_parameters_for_image(self, image):
+        """Auto-tune parameters for a specific image"""
+        # Convert to float for calculations
+        img_float = image.astype(np.float32)
+        
+        # Analyze image characteristics
+        means = np.mean(img_float, axis=(0, 1))  # B, G, R means
+        stds = np.std(img_float, axis=(0, 1))
+        
+        # Auto-tune white balance
+        if self.enable_white_balance.get():
+            # Gray world assumption - adjust to make channel means equal
+            avg_mean = np.mean(means)
+            
+            # Set white balance strength based on color cast severity
+            color_cast = np.std(means)
+            wb_strength = min(1.0, color_cast / 30.0)  # Scale factor
+            self.white_balance_strength.set(wb_strength)
+        
+        # Auto-tune red channel enhancement
+        if self.enable_red_channel.get():
+            # Enhance red if it's significantly lower than green/blue
+            red_deficiency = (means[1] + means[0]) / 2 - means[2]  # G+B average - R
+            if red_deficiency > 10:
+                red_scale = 1.0 + min(0.7, red_deficiency / 50.0)  # Reduced aggressiveness
+                self.red_scale.set(red_scale)
+            else:
+                self.red_scale.set(1.0)
+        
+        # Auto-tune dehazing based on dark channel
+        if self.enable_dehaze.get():
+            # Calculate dark channel
+            dark_channel = np.min(img_float, axis=2)
+            dark_mean = np.mean(dark_channel)
+            
+            # Higher dark channel values suggest more haze
+            dehaze_strength = min(0.95, max(0.5, dark_mean / 100.0))
+            self.dehaze_strength.set(dehaze_strength)
+        
+        # Auto-tune CLAHE based on contrast
+        if self.enable_clahe.get():
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            contrast = np.std(gray)
+            
+            if contrast < 30:  # Low contrast
+                clahe_clip = 3.0
+            elif contrast < 50:
+                clahe_clip = 2.5
+            else:
+                clahe_clip = 2.0
+            
+            self.clahe_clip.set(clahe_clip)
+        
+        # Auto-tune saturation
+        if self.enable_saturation.get():
+            hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+            saturation_mean = np.mean(hsv[:, :, 1])
+            
+            if saturation_mean < 100:  # Low saturation
+                sat_factor = 1.3
+            elif saturation_mean < 150:
+                sat_factor = 1.2
+            else:
+                sat_factor = 1.1
+            
+            self.saturation.set(sat_factor)
+    
+    def process_full_video(self):
+        """Process the full video with current parameters"""
+        if not hasattr(self, 'video_path'):
+            return
+        
+        try:
+            # Process video with current parameters
+            self.process_video(self.video_path)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to process video: {str(e)}")
+    
+    def close_video_mode(self):
+        """Close video mode and return to image mode"""
+        # Stop playback
+        self.is_playing = False
+        if hasattr(self, 'playback_job') and self.playback_job:
+            self.root.after_cancel(self.playback_job)
+        
+        # Release video capture
+        if hasattr(self, 'video_cap') and self.video_cap is not None:
+            self.video_cap.release()
+            self.video_cap = None
+        
+        # Disable video controls instead of destroying them
+        self.disable_video_controls()
+        
+        # Clear video mode
+        self.video_mode = False
+        
+        # Clear canvas
+        self.left_canvas.delete("all")
+        self.right_canvas.delete("all")
+        self.corrected_image = None
+        self.original_image = None
+        
+        # Update UI
+        self.canvas.create_text(self.canvas.winfo_width()//2, self.canvas.winfo_height()//2, 
+                               text="Load an image or video to begin", fill="gray", font=("Arial", 16))
+    
+    def on_parameter_change(self, value=None):
+        """Called when any parameter changes - update video preview if active"""
+        if hasattr(self, 'video_mode') and self.video_mode and hasattr(self, 'current_frame'):
+            # Small delay to avoid too frequent updates
+            if hasattr(self, 'update_job'):
+                self.root.after_cancel(self.update_job)
+            self.update_job = self.root.after(100, self.apply_correction)
 
     def process_video(self, video_path):
         """Process video with progress tracking"""

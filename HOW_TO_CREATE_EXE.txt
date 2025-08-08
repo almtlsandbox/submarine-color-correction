@@ -1,0 +1,56 @@
+"""
+INSTRUCTIONS TO CREATE EXE FILE
+================================
+
+Due to path length limitations, follow these steps to create the executable:
+
+OPTION A: Short Path Method
+===========================
+1. Copy your entire project folder to a short path like:
+   C:\submarine-color-correction
+
+2. Open Command Prompt as Administrator and navigate to the folder:
+   cd C:\submarine-color-correction
+
+3. Activate the virtual environment:
+   .venv\Scripts\activate
+
+4. Install PyInstaller if not installed:
+   pip install pyinstaller
+
+5. Create the executable:
+   pyinstaller --onefile --windowed --name "SubmarineColorCorrection" src/main.py
+
+6. Find your executable in the 'dist' folder
+
+OPTION B: Using Auto-Py-To-Exe (Recommended)
+============================================
+1. Install auto-py-to-exe:
+   pip install auto-py-to-exe
+
+2. Run the GUI:
+   auto-py-to-exe
+
+3. Configure in the GUI:
+   - Script Location: [browse to your src/main.py]
+   - Onefile: One File
+   - Console Window: Window Based (hide the console)
+   - Name: SubmarineColorCorrection
+   - Click "CONVERT .PY TO .EXE"
+
+OPTION C: Alternative Tools
+===========================
+You can also use:
+- cx_Freeze: pip install cx_Freeze
+- Nuitka: pip install nuitka
+- py2exe (Windows only): pip install py2exe
+
+TROUBLESHOOTING:
+================
+- If antivirus blocks the executable, add an exception
+- If the .exe is large (~100-200MB), this is normal for GUI apps with OpenCV
+- The executable will contain all dependencies and can run on machines without Python
+
+YOUR PROJECT IS READY FOR EXE CONVERSION!
+All necessary files are prepared and dependencies are properly configured.
+"""
