@@ -132,7 +132,14 @@ dmypy.json
 # Log files
 *.log
 color_correction_*.log
+submarine_color_correction_*.log
 test_log.log
+
+# Release builds and executables
+ReleasedVer/
+ReleaseColorCorrection/
+build/
+dist/
 
 # VS Code workspace files
 *.code-workspace

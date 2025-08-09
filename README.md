@@ -1,131 +1,170 @@
-````markdown
-# Submarine Color Correction
+# Submarine Color Correction v2.0
 
-A GUI application for performing advanced color correction on submarine and underwater images. This tool provides white balance correction, red channel enhancement, dehazing, image fusion, and other specialized filters designed to improve underwater photography.
+A professional GUI application for advanced underwater image color correction. This tool specializes in submarine, scuba diving, and underwater photography enhancement with intelligent algorithms for both ocean (blue water) and lake (green water) environments.
+
+## 🆕 What's New in v2.0
+
+### 🎯 **Smart Lake Mode Management**
+- **Automatic Water Type Detection**: AI-powered detection of lake vs ocean water
+- **Intelligent Parameter Coordination**: Automatically adjusts red channel and dehaze when magenta compensation is applied
+- **Specialized Lake Algorithms**: Beer-Lambert law implementation with lake-specific attenuation coefficients
+
+### 🧠 **Enhanced Auto-Tuning**
+- **Dual-Mode Intelligence**: Separate optimization for ocean vs lake environments
+- **Scientific Parameter Balancing**: Prevents over-correction by coordinating different algorithms
+- **High Confidence Results**: 0.95 confidence for lake mode, 0.80 for ocean mode
+
+### 🖼️ **Advanced Image Viewer**
+- **Smart View Management**: Automatically clears corrected previews when loading new images
+- **View Mode Intelligence**: Switches from "corrected" to "original" view, preserves "split" view
+- **Professional Navigation**: Zoom, pan, rotate with real-time preview
+
+### 🏗️ **Modern Architecture**
+- **Modular Design**: Clean separation of concerns with services, models, and core processors
+- **Specialized Processors**: Dedicated green water processor for lake environments
+- **Professional Logging**: Comprehensive debugging and performance monitoring
 
 ## Features
 
-- **Interactive GUI**: Professional tabbed interface built with Tkinter
-- **White Balance Correction**: Manual and automatic white balance adjustment
-- **Red Channel Enhancement**: Boost red tones lost in underwater photography
-- **Advanced Dehazing**: Remove water haze using dark channel prior techniques
-- **Image Fusion**: Combine multiple processing techniques for optimal results
-- **CLAHE Enhancement**: Contrast Limited Adaptive Histogram Equalization
-- **Saturation Control**: Fine-tune color saturation
-- **Auto-tune Parameters**: Intelligent automatic parameter optimization
-- **Image Navigation**: Zoom, pan, and rotate functionality
-- **Batch Processing**: Process multiple images efficiently
+### 🌊 **Water Type Specialization**
+- **Ocean Water**: Traditional blue water correction algorithms
+- **Lake Water**: Specialized green water processing with magenta compensation
+- **Auto Detection**: Intelligent water type recognition
+- **Manual Override**: Full user control when needed
 
-## Project Structure
+### 🎨 **Advanced Color Correction**
+- **Multi-Method White Balance**: Robust, Gray World, White Patch algorithms
+- **Scientific Red Channel Enhancement**: Beer-Lambert law based corrections
+- **Advanced Dehazing**: Dark channel prior with turbidity compensation
+- **Magenta Compensation**: Lake-specific green cast removal
+- **CLAHE Enhancement**: Adaptive histogram equalization
+- **Intelligent Saturation**: Context-aware color enhancement
 
-```
-submarine-color-correction/
-├── src/
-│   ├── main.py              # Main GUI application
-│   ├── color_correction.py  # Core color correction algorithms
-│   ├── ColorCorrection.py   # Enhanced ColorCorrection class
-│   └── utils.py            # Utility functions
-├── tests/
-│   └── test_color_correction.py # Unit tests
-├── requirements.txt         # Python dependencies
-└── README.md               # This file
-```
+### 🔧 **Professional Tools**
+- **Auto-Tune System**: AI-powered parameter optimization
+- **Real-time Processing**: Live preview of corrections
+- **Batch Processing**: Handle multiple images efficiently
+- **Professional Export**: High-quality image output
+
+### 🖥️ **User Interface**
+- **Tabbed Interface**: Organized parameter controls
+- **Visual Feedback**: Real-time parameter impact display
+- **Smart Adjustments**: UI automatically suggests optimal settings
+- **Professional Layout**: Clean, intuitive design
 
 ## Installation
 
-1. **Clone the repository**:
+### Quick Start
 ```bash
-git clone https://github.com/yourusername/submarine-color-correction.git
+# Clone the repository
+git clone https://github.com/almtlsandbox/submarine-color-correction.git
 cd submarine-color-correction
-```
 
-2. **Create a virtual environment** (recommended):
-```bash
+# Create virtual environment
 python -m venv .venv
-# On Windows:
+
+# Activate virtual environment
+# Windows:
 .venv\Scripts\activate
-# On macOS/Linux:
+# macOS/Linux:
 source .venv/bin/activate
-```
 
-3. **Install dependencies**:
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
 
-## Usage
-
-### GUI Application
-
-Launch the interactive application:
-```bash
+# Launch application
 python src/main.py
 ```
 
-**Features:**
-- Load images using the "Load Image" button
-- Adjust parameters in the organized tabs:
-  - **White Balance**: Color temperature and tint adjustment
-  - **Basic**: Red enhancement, dehazing, CLAHE, saturation
-  - **Advanced**: Fusion processing and advanced algorithms
-- Use "Auto Tune" for intelligent parameter optimization
-- Navigate with zoom, pan, and rotate controls
-- Save corrected images with "Save Image" button
+## Usage Guide
 
-### Key Controls
+### 🚀 **Quick Start**
+1. Launch the application: `python src/main.py`
+2. Click "Load Images" to select underwater photos
+3. Click "Auto-Tune" for intelligent optimization
+4. Fine-tune parameters if needed
+5. Save your enhanced images
 
-- **Load Image**: Select submarine/underwater image to correct
-- **Auto Tune**: Automatically optimize correction parameters
-- **Apply Correction**: Process image with current settings
-- **Save Image**: Export corrected image
-- **Zoom In/Out**: Navigate image details
-- **Pan**: Click and drag to move around zoomed images
-- **Rotate**: 90-degree rotation controls (↺ ↻)
+### 🎛️ **Parameter Tabs**
+- **Basic**: Essential corrections (white balance, red channel, dehaze)
+- **Green Water**: Lake-specific settings (water type, magenta compensation)
+- **Advanced**: Professional tools (CLAHE, saturation, fusion)
 
-## Technical Details
+### 🧠 **Auto-Tune System**
+The intelligent auto-tune analyzes your image and:
+- Detects water type (ocean vs lake)
+- Optimizes white balance for underwater conditions
+- Balances red channel enhancement with magenta compensation
+- Adjusts dehazing for water clarity
+- Prevents over-processing through smart parameter coordination
 
-### Color Correction Pipeline
+### 🌊 **Water Type Modes**
+- **Auto**: Intelligent detection (recommended)
+- **Ocean**: Traditional blue water algorithms
+- **Lake**: Specialized green water processing
 
-1. **White Balance**: Adjusts color temperature and removes color casts
-2. **Red Channel Enhancement**: Compensates for red light absorption underwater
-3. **Dehazing**: Uses dark channel prior algorithm to remove water haze
-4. **CLAHE**: Improves local contrast without over-amplifying noise
-5. **Saturation**: Fine-tunes color vibrancy
-6. **Fusion**: Combines multiple processing techniques
+## Technical Highlights
 
-### Auto-tune Algorithm
+### 🔬 **Scientific Algorithms**
+- **Beer-Lambert Law**: Accurate light attenuation modeling
+- **Dark Channel Prior**: Advanced haze removal
+- **Gray World Assumption**: Robust white balance
+- **CLAHE**: Contrast enhancement without artifacts
 
-The auto-tune feature analyzes image characteristics and automatically adjusts:
-- White balance based on gray-world assumption
-- Red channel enhancement based on blue/green dominance
-- Dehazing strength based on contrast analysis
-- CLAHE parameters for optimal local contrast
-- Saturation to maintain natural appearance
+### 🧠 **Intelligence Features**
+- **Water Type Detection**: Green dominance analysis
+- **Parameter Coordination**: Prevents algorithm conflicts
+- **Confidence Scoring**: Reliability metrics for auto-tune
+- **Smart UI Behavior**: Automatic parameter suggestions
 
-## Contributing
+### 🏆 **Performance**
+- **Real-time Preview**: Instant visual feedback
+- **Optimized Processing**: Efficient image handling
+- **Memory Management**: Handles large images
+- **Professional Output**: High-quality results
 
-Contributions are welcome! Please feel free to:
+## Development
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Building Executables
+```bash
+# Using cx_Freeze (recommended)
+python setup_cxfreeze_singlefile.py build_exe
+
+# Using build script
+.\build_exe.bat
+```
+
+### Running Tests
+```bash
+python -m pytest tests/
+```
 
 ## Requirements
 
-- Python 3.7+
-- OpenCV 4.5+
-- Pillow 8.0+
-- NumPy 1.21+
-- Tkinter (usually included with Python)
+- **Python**: 3.9+
+- **OpenCV**: 4.5+
+- **NumPy**: 1.21+
+- **Pillow**: 8.0+
+- **Tkinter**: (included with Python)
+
+## Contributing
+
+We welcome contributions! Please see our development docs:
+- `SMART_LAKE_MODE_MANAGEMENT.md` - Lake processing algorithms
+- `IMAGE_LOADING_ENHANCEMENT.md` - UI improvements
+- `AUTO_DETECTION_FIX_COMPLETE.md` - Auto-detection system
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License - see LICENSE file for details.
 
 ## Acknowledgments
 
-- OpenCV community for computer vision algorithms
-- Python Imaging Library (Pillow) for image processing
-- Dark channel prior dehazing algorithm research
+- Underwater photography community for testing and feedback
+- OpenCV team for computer vision algorithms
+- Scientific research on underwater light attenuation
+- Beta testers for lake water processing improvements
+
+---
+
+**Version 2.0** - Major release with lake water specialization and intelligent parameter management
